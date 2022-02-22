@@ -1,34 +1,39 @@
-import 'package:exercise_cubit1/cubit/counter_state.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:exercise_cubit1/cubit/counter/counter_state.dart';
 import 'package:exercise_cubit1/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'cubit/counter_cubit.dart';
+import 'cubit/counter/counter_cubit.dart';
+import 'cubit/internet_cubit/internet_cubit.dart';
 import 'presentation/home_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MyApp(
+    appRouter: AppRouter(),
+    connectivity: Connectivity(),
+  ));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final AppRouter _appRouter = AppRouter();
+class MyApp extends StatelessWidget {
+  final AppRouter appRouter;
+  final Connectivity connectivity;
+  const MyApp({Key? key, required this.appRouter, required this.connectivity})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      onGenerateRoute: _appRouter.onGenerateRoute,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<InternetCubit>(
+          create: (context) => InternetCubit(connectivity: connectivity),
+        ),
+        BlocProvider<CounterCubit>(
+          create: (context) => CounterCubit(),
+        ),
+      ],
+      child: MaterialApp(
+        onGenerateRoute: appRouter.onGenerateRoute,
+      ),
     );
-  }
-
-  @override
-  void dispose() {
-    _appRouter.dispose();
-    super.dispose();
   }
 }

@@ -11,7 +11,6 @@ class AppRouter {
       case '/':
         return MaterialPageRoute(builder: (_) => HomePage());
 
-        break;
       case '/second':
         return MaterialPageRoute(builder: (_) => SecondScreen());
 
